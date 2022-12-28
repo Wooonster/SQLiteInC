@@ -4,15 +4,28 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+// limit data size
 #define COLUMN_USERNAME_SIZE 32
 #define COLUMN_EMAIL_SIZE 255
 
+/**
+ * define simple row datastructure
+ * insert a ROW like "insert id username email"
+*/
 typedef struct
 {
     uint32_t id;
-    char username[COLUMN_USERNAME_SIZE];
-    char email[COLUMN_EMAIL_SIZE];
+    // plus 1 to allocate space for the end null of strings
+    char username[COLUMN_USERNAME_SIZE + 1];
+    char email[COLUMN_EMAIL_SIZE + 1];
 } Row;
+
+// define process statement
+typedef struct
+{
+    StatementType type;
+    Row row_to_insert;
+} Statement;
 
 typedef struct
 {
@@ -40,11 +53,6 @@ typedef enum
     STATEMENT_SELECT
 } StatementType;
 
-typedef struct
-{
-    StatementType type;
-    Row row_to_insert;
-} Statement;
 
 typedef enum
 {
@@ -52,6 +60,9 @@ typedef enum
     EXECUTE_TABLE_FULL
 } ExecuteResult;
 
+/**
+ * To serialize a compact array
+*/
 #define size_of_attribute(Struct, Attribute) sizeof(((Struct *)0)->Attribute)
 
 const uint32_t ID_SIZE = size_of_attribute(Row, id);
